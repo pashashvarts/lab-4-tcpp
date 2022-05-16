@@ -1,0 +1,243 @@
+using System;
+using System.Collections;
+using System.IO;
+namespace Lab4ex2
+{
+    class Program
+    {
+        public static ArrayList ReadFromFile(string path)
+        {
+            ArrayList list = new ArrayList();
+            string line;
+            StreamReader reader = File.OpenText(path);
+
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] s = line.Split(new string[]
+                {
+                    "Рiк: ", ", Автор: ", ", Назва: ", ", сторiнки: ", ", номер: "
+                }, 5, StringSplitOptions.RemoveEmptyEntries);
+                list.Add(new Student(s[0], s[1], s[2], int.Parse(s[3]), int.Parse(s[4])));
+            }
+            reader.Close();
+            return list;
+        }
+
+        //метод для редагування запису
+
+        public static Student Edit(Student student)
+        {
+            Console.WriteLine("\nЯке поле ви хочете редагувати?\n\n" +
+                                               "Рiк - 1\n" +
+                                               "Автор - 2\n" +
+                                               "Назва - 3\n" +
+                                               "сторiнки - 4\n" +
+                                               "номер - 5\n" +
+                                               "Вийти - 6");
+            Console.Write("\nВаш вибiр: ");
+            int localNum = int.Parse(Console.ReadLine());
+            Console.Write("\n");
+            Console.Write("Введiть нове значення: ");
+            switch (localNum)
+            {
+                case 1:
+                    student.Rik = Console.ReadLine(); break;
+                case 2:
+
+                        student.Avtor = Console.ReadLine(); break;
+                    
+                case 3:
+
+                        student.Nazva = Console.ReadLine(); break;
+                    
+                case 4:
+                    int ctrchange = int.Parse(Console.ReadLine());
+                    if (ctrchange < 0 || ctrchange > 5)
+                    {
+                        Console.Write("\nОцiнка не може бути бiльша за 5 i менша за 0\n"); break;
+                    }
+                    else
+                    {
+                        student.Ctr = ctrchange; break;
+                    }
+                case 5:
+                    int nomerchange = int.Parse(Console.ReadLine());
+                    if (nomerchange < 0 || nomerchange > 5)
+                    {
+                        Console.Write("\nОцiнка не може бути бiльша за 5 i менша за 0\n"); break;
+                    }
+                    else
+                    {
+                        student.Nomer = nomerchange; break;
+                    }
+                case 6: break;
+            }
+            return student;
+        }
+        public static void Write(string path, ArrayList students)
+        {
+            StreamWriter streamWriter;
+            streamWriter = File.CreateText(path);
+            foreach (Student n in students)
+            {
+                streamWriter.WriteLine(n);
+            }
+            streamWriter.Close();
+        }
+
+        static void Main(string[] args)
+        {
+
+            string path = "D:\\database.txt";
+
+
+            ArrayList students = new ArrayList(new Student[] { });
+            while (true)
+            {
+
+                Console.WriteLine("\n\tМеню\n\n" +
+                                  "Додати запис - 1\n" +
+                                  "Редагувати запис - 2\n" +
+                                  "Видалити запис - 3\n" +
+                                  "Вивести усi записи - 4\n" +
+                                  "Пошук за Автором - 5\n" +
+                                  "Вийти - 6");
+                try
+                {
+                    bool breakFlag = false;
+                    int a;
+                    Console.Write("\nВаш вибiр: ");
+                    int choice = int.Parse(Console.ReadLine());
+                    Console.Write("\n");
+                    switch (choice)
+                    {
+                        //код для додавання запису
+
+                        case 1:
+                            Console.Write("Рiк: ");
+                            string rik = Console.ReadLine();
+                            Console.Write("Автор: ");
+                            string avtor = Console.ReadLine();
+
+                            Console.Write("Назва: ");
+                            string nazva = Console.ReadLine();
+
+                            Console.Write("сторiнки: ");
+                            int ctr = int.Parse(Console.ReadLine());
+                            if (ctr < 1 || ctr > 500)
+                            {
+                                Console.Write("\nСторiнок не може бути бiльша за 500 i менша за 1\n"); break;
+                            }
+                            Console.Write("номер: ");
+                            int nomer = int.Parse(Console.ReadLine());
+                            if (nomer < 1 || nomer > 1000)
+                            {
+                                Console.Write("\nIнвентарний номер не може бути меньше за i бiльше за 1000\n"); break;
+                            }
+                            students = ReadFromFile(path);
+                            Student student = new Student(rik, avtor, nazva, ctr, nomer);
+                            students.Add(student);
+                            Write(path, students);
+                            break;
+
+                        //код для вибору запису для редагування 
+
+                        case 2:
+                            students = ReadFromFile(path);
+                            Console.WriteLine("Який запис хочете редагувати?\n");
+                            a = 1;
+                            students.Sort();
+                            for (int i = 0; i < students.Count; i++)
+                            {
+                                a++;
+                                Student n = (Student)students[i];
+                                Console.WriteLine($"{i + 1} - Рiк: {n.Rik}, Автор: {n.Avtor}, Назва: {n.Nazva}, сторiнки: {n.Ctr}, номер: {n.Nomer}");
+                            }
+                            Console.WriteLine($"{a} - Вийти");
+                            Console.Write("\nВаш вибiр: ");
+                            int editChoice = int.Parse(Console.ReadLine());
+                            if (editChoice == a)
+                                break;
+                            students[editChoice - 1] = Edit((Student)students[editChoice - 1]);
+                            Write(path, students);
+                            break;
+
+                        //код для видалення запису
+
+                        case 3:
+                            Console.WriteLine("Виберiть запис який хочете видалити\n");
+                            a = 1;
+                            students = ReadFromFile(path);
+                            students.Sort();
+                            for (int i = 0; i < students.Count; i++)
+                            {
+                                a++;
+                                Student n = (Student)students[i];
+                                Console.WriteLine($"{i + 1} - Рiк: {n.Rik}, Автор: {n.Avtor}, Назва: {n.Nazva}, сторiнки: {n.Ctr}, номер: {n.Nomer}");
+
+                            }
+                            Console.WriteLine($"{a} - Вийти");
+                            Console.Write("\nВаш вибiр: ");
+                            int deleteChoice = int.Parse(Console.ReadLine());
+                            Console.Write("\n");
+                            if (deleteChoice == a)
+                                break;
+                            students.Remove(students[deleteChoice - 1]);
+                            Write(path, students);
+                            break;
+
+                        //код виведення усіх записів
+
+                        case 4:
+                            students = ReadFromFile(path);
+                            students.Sort();
+                            foreach (Student n in students)
+                            {
+                                Console.WriteLine($"Рiк: {n.Rik}, Автор: {n.Avtor}, Назва: {n.Nazva}, сторiнки: {n.Ctr}, номер: {n.Nomer}");
+                            }
+                            Console.WriteLine("\n");
+                            break;
+
+                        //код для знаходження за номером групи
+
+                        case 5:
+                            int count = 0;
+                            students = ReadFromFile(path);
+                            Console.Write("Введiть Автора: ");
+                            string Avtorname = Console.ReadLine();
+                            Console.Write("\n");
+
+                            foreach (Student n in students)
+                            {
+                                if (n.Avtor.Equals(Avtorname))
+                                {
+                                    Console.WriteLine(n);
+                                    count++;
+
+                                }
+
+                            }
+                            if (count == 0)
+                            {
+                                Console.Write("Данi про такого автора не має \n");
+
+                            }
+
+                            break;
+                        case 6:
+                            breakFlag = true;
+                            break;
+                        default:
+                            continue;
+                    }
+                    if (breakFlag)
+                        break;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("\nВводити можна тiльки числа!\n");
+                }
+            }
+        }
+    }
+}
