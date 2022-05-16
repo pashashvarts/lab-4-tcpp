@@ -1,0 +1,69 @@
+using System;
+
+namespace Lab4ex2
+{
+    public class Student : IComparable
+    {
+
+        private string rik;
+        private string avtor;
+        private string nazva;
+        private int ctr;
+        private int nomer;
+
+        public override string ToString()
+        {
+            return $"Рiк: {rik}, Автор: {avtor}, Назва: {nazva}, сторiнки: {ctr}, номер: {nomer}";
+        }
+
+        public int CompareTo(object? obj)   
+        {
+            Student other = (Student)obj;
+            return Rik.CompareTo(other.Rik);
+        }
+
+
+        public Student()
+        {
+        }
+
+        public Student(string rik, string avtor, string nazva, int ctr, int nomer)
+        {
+            Rik = rik;
+            Avtor = avtor;
+            Nazva = nazva;
+            Ctr = ctr;
+            Nomer = nomer;
+        }
+
+        public string Rik
+        {
+            get => rik;
+            set => rik = value;
+        }
+
+        public string Avtor
+        {
+            get => avtor;
+            set => avtor = value;
+        }
+
+        public string Nazva
+        {
+            get => nazva;
+            set => nazva = value;
+        }
+
+        public int Ctr
+        {
+            get => ctr;
+            set => ctr = value;
+        }
+
+        public int Nomer
+        {
+            get => nomer;
+            set => nomer = value;
+        }
+    }
+}
